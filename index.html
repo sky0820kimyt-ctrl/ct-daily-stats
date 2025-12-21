@@ -9,7 +9,7 @@
     .controls{border:1px solid #ddd;border-radius:12px;padding:12px;margin-bottom:12px}
     .row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
     input[type="file"]{display:none}
-    input[type="text"], select{border:1px solid #ddd;border-radius:10px;padding:8px 10px}
+    input[type="text"], select, textarea{border:1px solid #ddd;border-radius:10px;padding:8px 10px}
     button{border:1px solid #ddd;border-radius:10px;padding:10px 12px;background:#fff;cursor:pointer}
     button:active{transform:translateY(1px)}
     .muted{color:#666;font-size:12px}
@@ -39,14 +39,12 @@
     .sum{background:#fafafa;font-weight:800}
     .section{background:#efefef;font-weight:800}
 
-    /* 우측 작은 표 */
     .mini th,.mini td{padding:6px 6px;font-size:12px}
 
     .badge { display:inline-block; padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; margin-left:6px; }
     .badge.ok { border-color:#0a7a2f; color:#0a7a2f; }
     .badge.warn { border-color:#b00020; color:#b00020; }
 
-    /* 미분류 UI */
     .unbox{border:1px solid #ddd;border-radius:12px;padding:10px;margin-top:10px;background:#fff}
     .unhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
     .unlist{max-height:220px;overflow:auto;border:1px solid #eee;border-radius:10px}
@@ -60,9 +58,37 @@
     .export{white-space:pre-wrap;background:#fafafa;border:1px solid #eee;border-radius:10px;padding:10px;max-height:180px;overflow:auto}
     .hidden{display:none}
 
+    .rulebox{border:1px solid #eee;border-radius:12px;padding:10px;margin-top:10px;background:#fff}
+    .rrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .tag{font-size:11px;border:1px solid #ddd;border-radius:999px;padding:2px 8px}
+    .danger{border-color:#b00020;color:#b00020}
+
+    .copybox{border:1px solid #ddd;border-radius:12px;padding:10px;margin-top:10px;background:#fff}
+    textarea{width:100%;min-height:120px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px}
+    .copygrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+
+    .panel{border:1px solid #eee;border-radius:12px;padding:10px;background:#fff;margin-top:10px}
+    .panel-title{font-weight:800;margin-bottom:6px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .line{height:1px;background:#eee;margin:10px 0}
+
+    /* ✅ 간단 모달 */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:9999}
+    .modal{background:#fff;border-radius:14px;max-width:720px;width:92vw;border:1px solid #ddd;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+    .modal-head{padding:12px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .modal-title{font-weight:900}
+    .modal-body{padding:12px 14px}
+    .modal-foot{padding:12px 14px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+    .modal textarea{min-height:140px}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #ddd;border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer;background:#fff}
+    .chip:hover{background:#fafafa}
+    .chip b{font-size:12px}
+
     @media print{
       .controls{display:none}
       .unbox{display:none}
+      .copybox{display:none}
+      .modal-backdrop{display:none !important;}
       body{margin:0}
       .paper{border:none;padding:0}
     }
@@ -72,34 +98,21 @@
 
 <div class="controls">
   <div class="row">
-    <div class="drop" id="drop-std">
-      <strong>1) 기준정보 파일(부위)</strong>
-      <div class="hint">조영제 목록/순서용(검사실분류는 고정 템플릿 사용)</div>
-      <div class="file" id="name-std">선택된 파일 없음</div>
-      <input id="fStd" type="file" accept=".xlsx,.xls" />
-    </div>
-
     <div class="drop" id="drop-ledger">
-      <strong>2) 검사대장</strong>
+      <strong>1) 검사대장</strong>
       <div class="hint">R, 시각, 검사명, 조영제, 횟수, 검사자1, I/O/E, 진료과 등</div>
       <div class="file" id="name-ledger">선택된 파일 없음</div>
       <input id="fLedger" type="file" accept=".xlsx,.xls" />
     </div>
 
     <div class="drop" id="drop-contrast">
-      <strong>3) 조영제통계(선택)</strong>
-      <div class="hint">조영제명/투여량 기반 집계(처방기준)</div>
+      <strong>2) 조영제통계(선택)</strong>
+      <div class="hint">불일치 확인용(표 표시는 실사용 기준)</div>
       <div class="file" id="name-contrast">선택된 파일 없음</div>
       <input id="fContrast" type="file" accept=".xlsx,.xls" />
     </div>
 
-    <div style="min-width:320px;">
-      <div class="muted">야간 근무자 이름(최대 4명, 콤마로)</div>
-      <input id="nightNames" type="text" placeholder="예: 홍길동, 김철수, 박영희, 최민수" />
-      <div class="muted">※ 검사자1이 여기에 있으면 시간과 무관하게 야간으로 집계</div>
-    </div>
-
-    <div style="min-width:220px;">
+    <div style="min-width:240px;">
       <div class="muted">날짜(표시용)</div>
       <input id="reportDate" type="text" placeholder="예: 2025년 12월 21일" />
     </div>
@@ -110,7 +123,53 @@
 
   <div id="status" class="muted" style="margin-top:8px;"></div>
 
-  <!-- ✅ 미분류 검사 + 클릭해서 규칙 추가 -->
+  <!-- ✅ 야간 근무자 프리셋(조1/조2) : 이 블록만 유지 -->
+  <div class="panel">
+    <div class="panel-title">야간근무자 프리셋(조1 / 조2)</div>
+    <div class="muted">조1(최대 3명), 조2(최대 3명) 저장 후 “적용”을 누르면 아래 야간근무자 칸이 자동 입력됩니다.</div>
+    <div class="grid2" style="margin-top:8px;">
+      <div>
+        <div class="muted">조1 (콤마로 3명)</div>
+        <input id="team1" type="text" placeholder="예: 홍길동, 김철수, 박영희" style="width:100%" />
+        <div class="row2" style="margin-top:6px;">
+          <button class="btnsm" id="btnSaveTeam1" type="button">조1 저장</button>
+          <button class="btnsm" id="btnApplyTeam1" type="button">조1 적용</button>
+        </div>
+      </div>
+      <div>
+        <div class="muted">조2 (콤마로 3명)</div>
+        <input id="team2" type="text" placeholder="예: 최민수, 이영희, 장길산" style="width:100%" />
+        <div class="row2" style="margin-top:6px;">
+          <button class="btnsm" id="btnSaveTeam2" type="button">조2 저장</button>
+          <button class="btnsm" id="btnApplyTeam2" type="button">조2 적용</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div>
+      <div class="muted">야간 근무자 이름(콤마로)</div>
+      <input id="nightNames" type="text" placeholder="예: 홍길동, 김철수, 박영희" style="width:100%" />
+      <div class="muted">※ 검사자1이 여기에 있으면 시간과 무관하게 야간으로 집계</div>
+    </div>
+  </div>
+
+  <!-- ✅ 검사명 분류(사용자): “초기화 버튼” 없음 + “Head 누르면 팝업” -->
+  <div class="panel">
+    <div class="panel-title">검사명 분류(사용자)</div>
+    <div class="muted">
+      아래 분류(Head/Neck/…)를 <b>누르면 팝업</b>이 뜹니다. 검사명에 포함될 키워드를 여러 개 입력하고 저장하세요.<br>
+      “공유 링크 복사”로 만든 링크를 열면 <b>어느 컴퓨터에서도 동일 규칙</b>이 적용됩니다(서버 없이 가능한 방식).
+    </div>
+    <div id="catChips" class="row2" style="margin-top:10px;"></div>
+    <div class="rulebox" style="margin-top:10px;">
+      <div style="font-weight:800;margin-bottom:6px;">저장된 검사명 분류 규칙(요약)</div>
+      <div id="examCatRulesView" class="muted"></div>
+    </div>
+  </div>
+
+  <!-- 미분류/규칙(기존 유지) -->
   <div class="unbox">
     <div class="unhead">
       <div>
@@ -124,36 +183,83 @@
     </div>
 
     <div class="row2" style="margin-bottom:8px;">
-      <span class="pill">규칙 적용 우선순위: <span class="kbd">사용자 규칙</span> → <span class="kbd">3D</span> → <span class="kbd">Abd+Pelv</span> → <span class="kbd">Angio</span> → <span class="kbd">Dynamic</span> → 기본</span>
-      <span class="pill">규칙은 <span class="kbd">부분 포함</span> 매칭</span>
+      <span class="pill">우선순위: <span class="kbd">Abd+Pelv</span> → <span class="kbd">사용자 분류(Head/..)</span> → <span class="kbd">사용자 Exact</span> → <span class="kbd">사용자 포함</span> → <span class="kbd">3D</span> → <span class="kbd">Angio</span> → <span class="kbd">Dynamic</span> → 기본</span>
     </div>
 
     <div class="unlist" id="unlist"></div>
 
     <div id="ruleEditor" class="hidden" style="margin-top:10px;">
       <div style="font-weight:800;margin-bottom:6px;">규칙 추가</div>
+
       <div class="row2" style="margin-bottom:8px;">
-        <div class="muted">선택된 검사명:</div>
+        <div class="muted">선택된 처방(검사명):</div>
         <div class="kbd" id="selExamText" style="font-weight:800;"></div>
       </div>
-      <div class="row2" style="margin-bottom:8px;">
+
+      <div class="rrow" style="margin-bottom:8px;">
         <div>
-          <div class="muted">포함 키워드(자동 입력됨, 수정 가능)</div>
-          <input id="ruleKeyword" type="text" style="min-width:320px" placeholder="예: PULMONARY THROMBO" />
+          <div class="muted">매칭 방식</div>
+          <select id="ruleMode">
+            <option value="exact">정확히 일치(Exact)</option>
+            <option value="contains" selected>부분 포함(Contains)</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:260px;">
+          <div class="muted">키워드/문구</div>
+          <input id="ruleKeyword" type="text" style="width:100%" placeholder="예: PULMONARY THROMBO 또는 검사명 전체" />
         </div>
         <div>
-          <div class="muted">분류(카테고리)</div>
-          <select id="ruleCategory">
-            <!-- JS로 채움 -->
-          </select>
+          <div class="muted">분류(항목)</div>
+          <select id="ruleCategory"></select>
         </div>
         <button class="btnsm" id="btnAddRule" type="button">규칙 저장</button>
         <button class="btnsm" id="btnCancelRule" type="button">취소</button>
       </div>
-      <div class="muted">※ 예: 키워드에 <span class="kbd">PULMONARY</span>, 분류에 <span class="kbd">Angio Pulmo-</span></div>
+
+      <div class="muted">
+        ※ “처방별 건수 다르게 나오는” 경우에는 <span class="kbd">정확히 일치</span>로 넣어두면 제일 안정적이에요.
+      </div>
     </div>
 
     <div id="exportBox" class="export hidden"></div>
+
+    <div class="rulebox">
+      <div style="font-weight:800;margin-bottom:6px;">저장된 사용자 규칙(최근순)</div>
+      <div class="muted" style="margin-bottom:8px;">필요 없어진 규칙은 삭제할 수 있어요.</div>
+      <div id="rulesView"></div>
+    </div>
+  </div>
+
+  <!-- 복붙용 결과 -->
+  <div class="copybox">
+    <div style="font-weight:800;">원본 파일로 복사/붙여넣기 (숫자만 · TSV)</div>
+    <div class="muted">값이 없으면 <b>0이 아니라 빈칸</b>으로 나옵니다.</div>
+
+    <div class="copygrid">
+      <div>
+        <div class="row2" style="justify-content:space-between;margin:6px 0;">
+          <div class="muted">검사실분류 (계, CT1~CT5)</div>
+          <button class="btnsm" id="btnCopyExam" type="button">숫자만 복사</button>
+        </div>
+        <textarea id="tsvExam" placeholder="생성 후 자동으로 채워집니다. (숫자만 / 0은 빈칸)"></textarea>
+      </div>
+
+      <div>
+        <div class="row2" style="justify-content:space-between;margin:6px 0;">
+          <div class="muted">조영제 (계(실사용), CT1~CT5)</div>
+          <button class="btnsm" id="btnCopyContrast" type="button">숫자만 복사</button>
+        </div>
+        <textarea id="tsvContrast" placeholder="생성 후 자동으로 채워집니다. (숫자만 / 0은 빈칸)"></textarea>
+      </div>
+
+      <div>
+        <div class="row2" style="justify-content:space-between;margin:6px 0;">
+          <div class="muted">검사실 구분 (계, 1번~5번)</div>
+          <button class="btnsm" id="btnCopyShift" type="button">숫자만 복사</button>
+        </div>
+        <textarea id="tsvShift" placeholder="생성 후 자동으로 채워집니다. (숫자만 / 0은 빈칸)"></textarea>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -168,7 +274,6 @@
   </div>
 
   <div class="layout">
-    <!-- 좌측: 검사실분류 -->
     <div class="box">
       <div class="box-title">검사실분류</div>
       <div class="pad">
@@ -195,24 +300,33 @@
       </div>
     </div>
 
-    <!-- 우측 -->
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div class="box">
-        <div class="box-title">2. 진료재료 확인 (조영제)</div>
+        <div class="box-title">
+          2. 진료재료 확인 (조영제)
+          <span class="badge" id="usageBadge" style="margin-left:8px; display:none;"></span>
+        </div>
         <div class="pad">
           <table>
             <thead>
               <tr>
                 <th class="left">조영제명</th>
                 <th>규격(ml)</th>
-                <th>계(처방)</th>
-                <th>CT1</th><th>CT2</th><th>CT3</th><th>CT4</th><th>CT5</th>
+                <th>
+                  계(실사용)<br><span id="c_sum_total">0</span>
+                </th>
+                <th>CT1<br><span id="c_sum_1">0</span></th>
+                <th>CT2<br><span id="c_sum_2">0</span></th>
+                <th>CT3<br><span id="c_sum_3">0</span></th>
+                <th>CT4<br><span id="c_sum_4">0</span></th>
+                <th>CT5<br><span id="c_sum_5">0</span></th>
               </tr>
             </thead>
             <tbody id="contrastBody"></tbody>
           </table>
           <div class="muted" style="margin-top:6px;">
-            ※ CT1~CT5는 <b>검사대장(실사용)</b> 기준, “계(처방)”는 <b>조영제통계</b> 기준입니다.
+            ※ 표의 “계(실사용)”는 <b>검사대장 기준</b>입니다.<br>
+            ※ 제목 옆 <b>조영제 실사용</b>은 <b>WITHOUT 제외</b> 기준입니다. (불일치 확인용 처방 파일은 선택)
           </div>
         </div>
       </div>
@@ -279,6 +393,32 @@
   </div>
 </div>
 
+<!-- ✅ 분류 편집 모달 -->
+<div class="modal-backdrop" id="catModalBackdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="catModalTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="catModalTitle">분류 편집</div>
+      <button class="btnsm" id="btnCloseCatModal" type="button">닫기</button>
+    </div>
+    <div class="modal-body">
+      <div class="muted" style="margin-bottom:6px;">
+        아래에 <b>키워드/처방명</b>을 한 줄에 하나씩 입력하세요. (검사명에 포함되면 해당 분류로 집계)
+      </div>
+      <textarea id="catModalTextarea" placeholder="예:
+BRAIN
+PNS
+OMU"></textarea>
+      <div class="muted" style="margin-top:8px;">
+        ✅ “공유 링크 복사”로 만든 링크를 다른 PC에서 열면, 그 PC에서도 같은 규칙이 적용됩니다.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btnsm" id="btnCopyShareLink" type="button">공유 링크 복사</button>
+      <button class="btnsm" id="btnSaveCatModal" type="button">저장</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   const $ = (id)=>document.getElementById(id);
@@ -288,10 +428,6 @@
     return Number.isFinite(n)?n:0;
   };
 
-  // 기준정보 파일 컬럼(조영제 목록/순서용)
-  const STD = { part:"부위" };
-
-  // 검사대장 컬럼
   const LEDGER = {
     room:"R",
     time:"시각",
@@ -303,14 +439,12 @@
     dept:"진료과"
   };
 
-  // 조영제통계 컬럼
   const CONTRAST = {
     cName:"조영제코드명",
     dose:"투여량",
     unit:"투여단위"
   };
 
-  // ✅ 검사실분류: 사용자 지정 “문자(순서)” 고정 템플릿
   const EXAM_TEMPLATE = [
     { type:"item", label:"Head" },
     { type:"item", label:"Neck" },
@@ -345,44 +479,95 @@
     { type:"sum", label:"합계" }
   ];
 
-  /* ===============================
-     ✅ 사용자 규칙(미분류 클릭 추가)
-     - localStorage 저장 (서버 없음)
-     - 형태: [{keyword:"...", categoryKey:"Angio Pulmo-"}]
-  =============================== */
-  const RULES_KEY = "ct_stat_user_rules_v1";
-  function loadRules(){
+  const CONTRAST_TEMPLATE = [
+    { cname:"iobrix 300",    ml:"100" },
+    { cname:"iobrix 300",    ml:"150" },
+    { cname:"iobrix 350",    ml:"150" },
+    { cname:"scanlux 300",   ml:"100" },
+    { cname:"scanlux 370",   ml:"100" },
+    { cname:"scanlux 300",   ml:"150" },
+    { cname:"omnipaque 350", ml:"100" },
+    { cname:"ultravist 300", ml:"50"  },
+    { cname:"ultravist 300", ml:"100" },
+    { cname:"iobrix 270",    ml:"100" },
+    { cname:"omnihexol 300", ml:"150" },
+    { cname:"bonorex 350",   ml:"100" },
+    { cname:"optiray 320",   ml:"100" },
+    { cname:"WITHOUT",       ml:"" }
+  ];
+
+  const RULES_KEY = "ct_stat_user_rules_v2";
+  const TEAM1_KEY = "ct_stat_team1_v1";
+  const TEAM2_KEY = "ct_stat_team2_v1";
+  const EXAMCAT_KEY = "ct_stat_examcat_rules_v1"; // {cat:[kw...]}
+
+  function loadJSON(key, fallback){
     try{
-      const raw = localStorage.getItem(RULES_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    }catch(e){ return []; }
+      const raw = localStorage.getItem(key);
+      if(!raw) return fallback;
+      const v = JSON.parse(raw);
+      return v ?? fallback;
+    }catch(e){ return fallback; }
   }
-  function saveRules(rules){
-    localStorage.setItem(RULES_KEY, JSON.stringify(rules));
-  }
-  function clearRules(){
-    localStorage.removeItem(RULES_KEY);
-  }
+  function saveJSON(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+
+  function loadRules(){ return loadJSON(RULES_KEY, []); }
+  function saveRules(rules){ saveJSON(RULES_KEY, rules); }
+  function clearRules(){ localStorage.removeItem(RULES_KEY); }
+
+  function loadTeam(key){ return (localStorage.getItem(key) || "").trim(); }
+  function saveTeam(key, text){ localStorage.setItem(key, String(text||"").trim()); }
+  function setNightFromTeam(text){ $("nightNames").value = (text || "").trim(); }
 
   function allCategoryKeys(){
-    return EXAM_TEMPLATE
-      .filter(x => x.type === "item")
-      .map(x => x.key || x.label);
+    return EXAM_TEMPLATE.filter(x => x.type === "item").map(x => x.key || x.label);
   }
 
-  function fillCategorySelect(){
-    const sel = $("ruleCategory");
-    if(!sel) return;
-    sel.innerHTML = "";
-    for(const k of allCategoryKeys()){
-      const opt = document.createElement("option");
-      opt.value = k;
-      opt.textContent = k;
-      sel.appendChild(opt);
-    }
+  // ✅ 검사명 분류 규칙
+  function loadExamCatRules(){ return loadJSON(EXAMCAT_KEY, {}); }
+  function saveExamCatRules(obj){ saveJSON(EXAMCAT_KEY, obj); }
+
+  // ✅ 서버 없이 “어느 PC든” 쓰기 위한 공유 링크(해시)
+  // #cfg=<base64url(json)>
+  function b64urlEncode(str){
+    const b64 = btoa(unescape(encodeURIComponent(str)));
+    return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   }
-  fillCategorySelect();
+  function b64urlDecode(b64url){
+    const b64 = b64url.replace(/-/g,'+').replace(/_/g,'/');
+    const pad = b64.length % 4 ? '='.repeat(4 - (b64.length % 4)) : '';
+    return decodeURIComponent(escape(atob(b64 + pad)));
+  }
+
+  function applyConfigFromURL(){
+    const h = location.hash || "";
+    const m = h.match(/cfg=([^&]+)/);
+    if(!m) return false;
+    try{
+      const json = b64urlDecode(m[1]);
+      const cfg = JSON.parse(json);
+      // cfg.examCatRules만 반영(필요하면 확장 가능)
+      if(cfg && typeof cfg === "object" && cfg.examCatRules){
+        saveExamCatRules(cfg.examCatRules);
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+  // 페이지 로드시 URL에 cfg 있으면 반영
+  const applied = applyConfigFromURL();
+
+  // 초기 프리셋 로드
+  (function init(){
+    const t1 = loadTeam(TEAM1_KEY); if(t1) $("team1").value = t1;
+    const t2 = loadTeam(TEAM2_KEY); if(t2) $("team2").value = t2;
+  })();
+
+  $("btnSaveTeam1").addEventListener("click", ()=>{ saveTeam(TEAM1_KEY, $("team1").value); alert("조1 저장 ✅"); });
+  $("btnSaveTeam2").addEventListener("click", ()=>{ saveTeam(TEAM2_KEY, $("team2").value); alert("조2 저장 ✅"); });
+  $("btnApplyTeam1").addEventListener("click", ()=> setNightFromTeam(loadTeam(TEAM1_KEY) || $("team1").value));
+  $("btnApplyTeam2").addEventListener("click", ()=> setNightFromTeam(loadTeam(TEAM2_KEY) || $("team2").value));
 
   function bindDrop(dropId, inputId, nameId){
     const drop = $(dropId), input = $(inputId), name = $(nameId);
@@ -399,8 +584,6 @@
     });
     setName();
   }
-
-  bindDrop("drop-std","fStd","name-std");
   bindDrop("drop-ledger","fLedger","name-ledger");
   bindDrop("drop-contrast","fContrast","name-contrast");
 
@@ -411,7 +594,6 @@
     return XLSX.utils.sheet_to_json(ws,{defval:""});
   }
 
-  // ✅ R 파싱: "41"->4, "31"->3
   function extractRoomNo(rValue){
     const s = String(rValue ?? "").trim();
     if(!s) return null;
@@ -420,7 +602,7 @@
     const n = Number(nums[0]);
     if(Number.isFinite(n)){
       if(n >= 10){
-        const room = Math.floor(n / 10);
+        const room = Math.floor(n / 10); // 41 -> 4
         if(room >= 1 && room <= 5) return room;
       }
       if(n >= 1 && n <= 5) return n;
@@ -432,17 +614,14 @@
     return new Set(String(text||"").split(",").map(x=>x.trim()).filter(Boolean));
   }
 
-  function normKey(s){
-    return String(s||"")
-      .toUpperCase()
-      .replace(/\s+/g,"")
-      .replace(/[()._-]/g,"");
-  }
   function normKey2(s){
     return String(s||"")
       .toUpperCase()
       .replace(/\s+/g,"")
       .replace(/[()._\-]/g,"");
+  }
+  function alnumKey(s){
+    return String(s||"").toUpperCase().replace(/[^A-Z0-9]+/g,"");
   }
 
   function toMinutes(hhmmss){
@@ -454,40 +633,63 @@
   function splitContrastCell(v){
     const s = String(v||"").trim();
     if(!s) return [];
-    return s.split(/[\n,;/+]+/g).map(x=>x.trim()).filter(Boolean);
+    return s.split(/[\n,;]+/g).map(x=>x.trim()).filter(Boolean);
   }
 
-  /* ===============================
-     ✅ 동의어/규칙 반영 (요청사항 포함)
-     1) 검사명에 3D 있으면 → 3D 카테고리 우선
-     2) dynamic 포함이면 → Dynamic
-     3) abdomen+pelvis → Abd+Pelv
-     4) head/neck angiography → Angio Head/Neck
-     5) pulmonary thrombo~ → Angio Pulmo-
-     6) upper/lower extremity angiography → Angio Extremity
-  =============================== */
+  function isWithoutText(v){
+    const u = String(v||"").toUpperCase().trim();
+    if(!u) return true;
+    return (
+      u.includes("WITHOUT") ||
+      u.includes("W/O") || u === "WO" || u.includes(" WO ") ||
+      u.includes("NONCONTRAST") || u.includes("NON CONTRAST") ||
+      u === "NC" || u.includes(" NC ")
+    );
+  }
+
+  function parseContrastItem(rawItem){
+    const raw = String(rawItem||"").trim();
+    const u = raw.toUpperCase();
+    const key = alnumKey(u);
+
+    let ml = "";
+    const ml1 = u.match(/(\d{2,3})\s*ML\b/i);
+    if(ml1) ml = String(ml1[1]);
+    if(!ml){
+      const ml2 = u.match(/[\/\s](\d{2,3})\b/);
+      if(ml2) ml = String(ml2[1]);
+    }
+
+    let conc = "";
+    const nums = (u.match(/\b\d{3}\b/g) || []).map(String);
+    if(nums.length){
+      const filtered = nums.filter(n => n !== ml);
+      conc = filtered[0] || nums[0];
+    }
+
+    return { raw, u, key, ml, conc };
+  }
+
   function preprocessExamName(raw){
     let x = String(raw || "");
     const u = x.toUpperCase();
 
-    // 3D 우선 플래그
     const has3D = u.includes("3D") || u.includes("3-D") || u.includes("THREE D");
     if(has3D) x += " ##IS3D## 3D";
 
-    // Abdomen+Pelvis 결합
     const combinedAbdPelv =
-      u.includes("ABDOMEN+PELVIS") || u.includes("ABDOMEN + PELVIS") ||
+      (u.includes("ABDOMEN") && u.includes("PELVIS")) ||
+      u.includes("ABDOMEN+PELVIS") ||
+      u.includes("ABDOMEN/PELVIS") ||
+      u.includes("ABDOMEN-PELVIS") ||
       u.includes("ABD+PELV") || u.includes("ABD+PELV.") ||
-      u.includes("ABD+PELVIS") || u.includes("ABDPELV");
+      u.includes("ABDPELV");
     if (combinedAbdPelv) x += " ##ABDPELV## Abd+Pelv";
 
-    // Dynamic
     if (u.includes("DYNAMIC")) x += " Dynamic";
 
-    // Head 범위
     if (u.includes("BRAIN") || u.includes("FACIAL") || u.includes("PNS") || u.includes("OMU")) x += " Head";
 
-    // Neck 범위
     if (
       u.includes("NECK") || u.includes("THYROID") ||
       u.includes("ORAL+NECK") || u.includes("ORAL + NECK") ||
@@ -495,55 +697,28 @@
       u.includes("FOREIGN BODY") || u.includes("FOREIGNBODY") || u.includes("F/B")
     ) x += " Neck";
 
-    // chest -> thorax
     if (u.includes("CHEST")) x += " Thorax";
 
-    // Angio 판정
     const isAngio = u.includes("ANGIO") || u.includes("ANGIOGRAPHY") || u.includes("ANGIOGRAPHIC");
     if (isAngio) x += " Angio";
 
-    // head/neck angiography -> Head/Neck
-    if (
-      u.includes("HEAD ANGIO") || u.includes("HEAD ANGIOGRAPHY") ||
-      u.includes("NECK ANGIO") || u.includes("NECK ANGIOGRAPHY")
-    ) x += " Head/Neck";
+    if (u.includes("HEAD ANGIO") || u.includes("HEAD ANGIOGRAPHY") ||
+        u.includes("NECK ANGIO") || u.includes("NECK ANGIOGRAPHY")) {
+      x += " Head/Neck";
+    }
 
-    // pulmonary thrombo~ -> Pulmo-
     if (u.includes("PULMONARY") || u.includes("PULMO") || u.includes("THROMBO")) x += " Pulmo-";
-
-    // coronary -> heart
     if (u.includes("CORONARY")) x += " Heart";
 
-    // upper/lower extremity angio -> Extremity
     if (u.includes("EXTREMITY") || u.includes("LOWER") || u.includes("UPPER")) x += " Extremity";
 
-    // dvt
-    if (u.includes("VENOGRAPH") || u.includes("VENOGRAPHG") || u.includes("VENO")) x += " DVT";
+    if (u.includes("VENOGRAPHY") || u.includes("VENOGRAM") || u.includes("VENOGRAPH") || u.includes("VENO")) {
+      x += " ##VENOANGIO## Angio Extremity";
+    }
+
+    if (u.includes("DVT")) x += " DVT";
 
     return x;
-  }
-
-  function matches(examName, label){
-    return normKey(examName).includes(normKey(label));
-  }
-  function matchesGroupItem(examName, groupKeyword, label){
-    const a = normKey(examName);
-    return a.includes(normKey(groupKeyword)) && a.includes(normKey(label));
-  }
-
-  /* ===============================
-     ✅ 사용자 규칙 적용
-     - exam 원문(rawExam)을 대상으로 부분 포함 매칭
-     - 매칭되면 지정 categoryKey 반환
-  =============================== */
-  function applyUserRules(rawExam, rules){
-    const rawU = String(rawExam||"").toUpperCase();
-    for(const r of rules){
-      const kw = String(r.keyword||"").toUpperCase().trim();
-      if(!kw) continue;
-      if(rawU.includes(kw)) return r.categoryKey;
-    }
-    return null;
   }
 
   function addAgg(agg, room, cnt){
@@ -551,12 +726,10 @@
     agg.total += cnt;
     agg.by[room] += cnt;
   }
-
   function fillRow(prefix, agg){
     $(prefix+"_total").textContent = agg.total;
     for(let r=1;r<=5;r++) $(prefix+"_"+r).textContent = agg.by[r];
   }
-
   function setBadge(ok, text){
     const badge = $("matchBadge");
     badge.style.display = "inline-block";
@@ -564,11 +737,6 @@
     badge.textContent = text;
   }
 
-  $("printBtn").addEventListener("click", ()=> window.print());
-
-  /* ===============================
-     ✅ 미분류 리스트 UI helpers
-  =============================== */
   function renderUnclassified(unMap){
     const list = $("unlist");
     list.innerHTML = "";
@@ -597,9 +765,7 @@
         </div>
         <div class="count">${count}</div>
       `;
-      div.addEventListener("click", ()=>{
-        openRuleEditor(name);
-      });
+      div.addEventListener("click", ()=> openRuleEditor(name));
       list.appendChild(div);
     }
   }
@@ -609,26 +775,114 @@
     $("exportBox").classList.add("hidden");
     $("selExamText").textContent = examName;
 
-    // 기본 키워드: 너무 길면 앞 24자
+    $("ruleMode").value = "contains";
     const base = String(examName||"").trim();
-    $("ruleKeyword").value = base.length > 24 ? base.slice(0,24) : base;
+    $("ruleKeyword").value = base.length > 40 ? base.slice(0,40) : base;
 
-    // 추천 카테고리(간단 추정)
     const u = base.toUpperCase();
     let guess = "Head";
-    if(u.includes("3D")) guess = "3D Spine";
+    if(u.includes("ABD") && u.includes("PELV")) guess = "Abd+Pelv";
+    else if(u.includes("3D")) guess = "3D Spine";
+    else if(u.includes("VENO") || u.includes("VENOGRAPH") || u.includes("VENOGRAM") || u.includes("VENOGRAPHY")) guess = "Angio Extremity";
     else if(u.includes("ANGIO") || u.includes("ANGIOGRAPHY")) guess = "Angio Head/Neck";
     else if(u.includes("DYNAMIC")) guess = "Dynamic";
-    else if(u.includes("PELV") && u.includes("ABD")) guess = "Abd+Pelv";
     $("ruleCategory").value = allCategoryKeys().includes(guess) ? guess : allCategoryKeys()[0];
   }
 
-  $("btnCancelRule").addEventListener("click", ()=>{
-    $("ruleEditor").classList.add("hidden");
-  });
+  function applyUserRules(rawExam, rules){
+    const raw = String(rawExam||"").trim();
+    const rawU = raw.toUpperCase();
+    const rawN = normKey2(raw);
+
+    for(const r of rules){
+      if(r.mode !== "exact") continue;
+      const pat = String(r.keyword||"").trim();
+      if(!pat) continue;
+      if(normKey2(pat) === rawN) return r.categoryKey;
+    }
+    for(const r of rules){
+      if(r.mode !== "contains") continue;
+      const kw = String(r.keyword||"").toUpperCase().trim();
+      if(!kw) continue;
+      if(rawU.includes(kw)) return r.categoryKey;
+    }
+    return null;
+  }
+
+  // ✅ 사용자 “검사명 분류” 규칙 적용(부분 포함)
+  function applyExamCatRules(rawExam, examCatRules){
+    const raw = String(rawExam||"").trim();
+    if(!raw) return null;
+    const U = raw.toUpperCase();
+    const keys = Object.keys(examCatRules||{});
+    for(const cat of keys){
+      const arr = Array.isArray(examCatRules[cat]) ? examCatRules[cat] : [];
+      for(const kw of arr){
+        const k = String(kw||"").trim();
+        if(!k) continue;
+        if(U.includes(k.toUpperCase())) return cat;
+      }
+    }
+    return null;
+  }
+
+  function renderRulesView(){
+    const box = $("rulesView");
+    const rules = loadRules();
+    box.innerHTML = "";
+    if(!rules.length){
+      box.innerHTML = `<div class="muted">저장된 규칙이 없습니다.</div>`;
+      return;
+    }
+
+    rules.slice(0, 30).forEach((r, idx)=>{
+      const div = document.createElement("div");
+      div.style.display = "flex";
+      div.style.justifyContent = "space-between";
+      div.style.alignItems = "center";
+      div.style.gap = "8px";
+      div.style.padding = "6px 0";
+      div.style.borderBottom = "1px solid #f1f1f1";
+
+      const left = document.createElement("div");
+      left.innerHTML =
+        `<span class="tag">${r.mode === "exact" ? "EXACT" : "CONTAINS"}</span> ` +
+        `<span class="kbd">${(r.keyword||"").replace(/</g,"&lt;")}</span> ` +
+        `<span class="muted">→</span> <span class="tag">${r.categoryKey}</span>`;
+
+      const btn = document.createElement("button");
+      btn.className = "btnsm";
+      btn.innerHTML = `<span class="tag danger">삭제</span>`;
+      btn.addEventListener("click", ()=>{
+        const all = loadRules();
+        all.splice(idx, 1);
+        saveRules(all);
+        renderRulesView();
+      });
+
+      div.appendChild(left);
+      div.appendChild(btn);
+      box.appendChild(div);
+    });
+  }
+  renderRulesView();
+
+  function fillCategorySelect(){
+    const sel = $("ruleCategory");
+    sel.innerHTML = "";
+    for(const k of allCategoryKeys()){
+      const opt = document.createElement("option");
+      opt.value = k;
+      opt.textContent = k;
+      sel.appendChild(opt);
+    }
+  }
+  fillCategorySelect();
+
+  $("btnCancelRule").addEventListener("click", ()=>{ $("ruleEditor").classList.add("hidden"); });
 
   $("btnAddRule").addEventListener("click", ()=>{
-    const examText = $("selExamText").textContent || "";
+    const mode = $("ruleMode").value;
     const keyword = $("ruleKeyword").value.trim();
     const categoryKey = $("ruleCategory").value;
 
@@ -638,11 +892,12 @@
     }
 
     const rules = loadRules();
-    rules.unshift({ keyword, categoryKey, createdAt: new Date().toISOString() });
+    rules.unshift({ mode, keyword, categoryKey, createdAt: new Date().toISOString() });
     saveRules(rules);
 
     $("ruleEditor").classList.add("hidden");
-    alert("규칙이 저장되었습니다. '생성'을 다시 누르면 적용됩니다.\n\n키워드: " + keyword + "\n분류: " + categoryKey);
+    renderRulesView();
+    alert("규칙이 저장되었습니다. '생성'을 다시 누르면 적용됩니다.\n\n[" + mode.toUpperCase() + "] " + keyword + "\n→ " + categoryKey);
   });
 
   $("btnClearRules").addEventListener("click", ()=>{
@@ -650,6 +905,7 @@
       clearRules();
       $("exportBox").classList.add("hidden");
       $("ruleEditor").classList.add("hidden");
+      renderRulesView();
       alert("규칙이 초기화되었습니다.");
     }
   });
@@ -662,8 +918,120 @@
     box.scrollTop = 0;
   });
 
+  $("printBtn").addEventListener("click", ()=> window.print());
+
+  async function copyToClipboard(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      alert("클립보드에 복사되었습니다 ✅");
+    }catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      alert("클립보드에 복사되었습니다 ✅");
+    }
+  }
+
+  // ✅ 숫자만 TSV: 0이면 빈칸
+  function makeTSVNumbersOnly(rows){
+    const esc = (v)=> String(v ?? "").replace(/\t/g," ").replace(/\r?\n/g," ");
+    const val = (n)=>{
+      const x = Number(n);
+      if(!Number.isFinite(x) || x === 0) return "";
+      return String(x);
+    };
+    return rows.map(r => r.map(v => esc(val(v))).join("\t")).join("\n");
+  }
+
+  $("btnCopyExam").addEventListener("click", ()=> copyToClipboard($("tsvExam").value));
+  $("btnCopyContrast").addEventListener("click", ()=> copyToClipboard($("tsvContrast").value));
+  $("btnCopyShift").addEventListener("click", ()=> copyToClipboard($("tsvShift").value));
+
+  // ✅ 검사명 분류(사용자) UI: chip 렌더 + 모달 편집
+  let currentEditCat = null;
+
+  function renderCatChips(){
+    const box = $("catChips");
+    box.innerHTML = "";
+    for(const cat of allCategoryKeys()){
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.innerHTML = `<b>${cat}</b><span class="muted">편집</span>`;
+      chip.addEventListener("click", ()=> openCatModal(cat));
+      box.appendChild(chip);
+    }
+  }
+
+  function renderExamCatRulesSummary(){
+    const box = $("examCatRulesView");
+    const obj = loadExamCatRules();
+    const keys = Object.keys(obj||{});
+    if(!keys.length){
+      box.innerHTML = `<div class="muted">저장된 규칙이 없습니다. (예: Head 클릭 → BRAIN/PNS/OMU 입력 → 저장)</div>`;
+      return;
+    }
+    const lines = [];
+    for(const k of keys.sort()){
+      const arr = Array.isArray(obj[k]) ? obj[k].filter(Boolean) : [];
+      if(!arr.length) continue;
+      lines.push(`<div><span class="tag">${k}</span> <span class="muted">(${arr.length}개)</span> : <span class="kbd">${arr.join(", ")}</span></div>`);
+    }
+    box.innerHTML = lines.join("") || `<div class="muted">저장된 규칙이 없습니다.</div>`;
+  }
+
+  function openCatModal(cat){
+    currentEditCat = cat;
+    $("catModalTitle").textContent = `분류 편집: ${cat}`;
+    const rules = loadExamCatRules();
+    const arr = Array.isArray(rules[cat]) ? rules[cat] : [];
+    $("catModalTextarea").value = arr.join("\n");
+    $("catModalBackdrop").style.display = "flex";
+    $("catModalBackdrop").setAttribute("aria-hidden", "false");
+    $("catModalTextarea").focus();
+  }
+
+  function closeCatModal(){
+    $("catModalBackdrop").style.display = "none";
+    $("catModalBackdrop").setAttribute("aria-hidden", "true");
+    currentEditCat = null;
+  }
+
+  $("btnCloseCatModal").addEventListener("click", closeCatModal);
+  $("catModalBackdrop").addEventListener("click", (e)=>{
+    if(e.target === $("catModalBackdrop")) closeCatModal();
+  });
+
+  $("btnSaveCatModal").addEventListener("click", ()=>{
+    if(!currentEditCat) return;
+    const text = $("catModalTextarea").value || "";
+    const arr = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const rules = loadExamCatRules();
+    rules[currentEditCat] = arr;
+    saveExamCatRules(rules);
+    renderExamCatRulesSummary();
+    alert("저장 ✅");
+  });
+
+  $("btnCopyShareLink").addEventListener("click", async ()=>{
+    // 현재 examCatRules를 URL hash cfg에 넣어서 공유 링크 생성
+    const cfg = { examCatRules: loadExamCatRules() };
+    const encoded = b64urlEncode(JSON.stringify(cfg));
+    const url = location.origin + location.pathname + "#cfg=" + encoded;
+    await copyToClipboard(url);
+  });
+
+  renderCatChips();
+  renderExamCatRulesSummary();
+
+  // URL cfg가 적용됐으면 요약 갱신
+  if(applied){
+    renderExamCatRulesSummary();
+  }
+
   $("run").addEventListener("click", async ()=>{
-    const fStd = $("fStd").files?.[0] || null;
     const fLedger = $("fLedger").files?.[0];
     const fContrast = $("fContrast").files?.[0] || null;
 
@@ -674,17 +1042,12 @@
 
     $("status").textContent = "계산 중…";
 
-    const stdRows = fStd ? await readFirstSheet(fStd) : [];
     const ledgerRows = await readFirstSheet(fLedger);
     const nightSet = parseNameSet($("nightNames").value);
-
-    // ✅ 사용자 규칙 로드
     const userRules = loadRules();
+    const examCatRules = loadExamCatRules();
+    const unclassifiedMap = new Map();
 
-    // ✅ 미분류 누적
-    const unclassifiedMap = new Map(); // rawExam -> count
-
-    // ✅ 검사실분류 집계용 저장소
     const examAgg = new Map();
     for(const row of EXAM_TEMPLATE){
       if(row.type !== "item") continue;
@@ -692,64 +1055,52 @@
       examAgg.set(key, { total:0, by:{1:0,2:0,3:0,4:0,5:0} });
     }
 
-    // ✅ 특이사항: 병동(I) + EM 제외 + 17:20~21:10
     let wardOnly = 0;
     const tStart = 17*60 + 20;
     const tEnd   = 21*60 + 10;
 
-    // ✅ 검사실 구분 집계
     const dayAgg = { total:0, by:{1:0,2:0,3:0,4:0,5:0} };
     const nightAgg = { total:0, by:{1:0,2:0,3:0,4:0,5:0} };
     const allAgg = { total:0, by:{1:0,2:0,3:0,4:0,5:0} };
 
-    // ---------- 기준정보에서 조영제 라인 추출 ----------
-    const contrastRowsStd = [];
-    if(stdRows.length){
-      let inContrast = false;
-      for(const r of stdRows){
-        const p = norm(r[STD.part]);
-        if(!p) continue;
-        if(p.includes("조영제")) { inContrast = true; continue; }
-        if(inContrast && p === "합계") break;
-        if(inContrast) contrastRowsStd.push(p);
-      }
-    }
+    // --- 조영제 템플릿 준비 ---
+    const stdContrastKeys = CONTRAST_TEMPLATE.map(x => {
+      const cname = String(x.cname);
+      const ml = String(x.ml||"");
+      const isWithout = cname.toUpperCase() === "WITHOUT";
+      const base = isWithout ? "WITHOUT" : cname.replace(/\s*\d+\s*$/,"");
+      const concMatch = isWithout ? null : cname.match(/(\d{3})\s*$/);
+      const conc = concMatch ? concMatch[1] : "";
+      return {
+        cname, ml, isWithout,
+        baseKey: alnumKey(base),
+        conc,
+        keyExact: `${alnumKey(cname)}||${ml}`
+      };
+    });
 
-    const stdContrastKeys = [];
-    for (const line of contrastRowsStd) {
-      const m = String(line).match(/^(.*?)(?:\s*inj)?\s*\[(\d+)\s*ml\]\s*$/i);
-      let cname = String(line), ml = "";
-      if (m) { cname = m[1].trim(); ml = m[2]; }
-      stdContrastKeys.push({ cname, ml, keyName: normKey2(cname) });
-    }
-
-    // ✅ 검사대장 기준 조영제 방별 집계 + 총계(실사용)
     const contrastAggByRoom = new Map();
-    function ensureContrastAgg(key){
-      if(!contrastAggByRoom.has(key)){
-        contrastAggByRoom.set(key, { total:0, by:{1:0,2:0,3:0,4:0,5:0} });
+    function ensureContrastAgg(keyExact){
+      if(!contrastAggByRoom.has(keyExact)){
+        contrastAggByRoom.set(keyExact, { total:0, by:{1:0,2:0,3:0,4:0,5:0} });
       }
-      return contrastAggByRoom.get(key);
+      return contrastAggByRoom.get(keyExact);
     }
-    let ledgerContrastTotal = 0;
 
-    // ---------- 조영제통계 파일 기준 (처방) ----------
-    const contrastCount = new Map();
+    // ✅ 조영제 실사용(비교/표시 배지): WITHOUT 제외
+    let ledgerContrastTotalForCompare = 0;
+
+    // --- 조영제통계(처방) : 불일치 확인용
+    let contrastStatTotal = 0;
     if(fContrast){
       const contrastRows = await readFirstSheet(fContrast);
       for(const r of contrastRows){
         const name = norm(r[CONTRAST.cName]);
         if(!name) continue;
-        const dose = norm(r[CONTRAST.dose]);
-        const ml = dose ? String(dose).replace(/\.0$/,"") : "";
-        const key = `${name}||${ml}`;
-        contrastCount.set(key, (contrastCount.get(key)||0) + 1);
+        contrastStatTotal += 1;
       }
     }
-    let contrastStatTotal = 0;
-    for (const v of contrastCount.values()) contrastStatTotal += v;
 
-    // ---------- 메인 루프: 검사대장 ----------
     for(const row of ledgerRows){
       const room = extractRoomNo(row[LEDGER.room]);
       if(!room) continue;
@@ -758,19 +1109,16 @@
 
       const rawExam = norm(row[LEDGER.exam]);
       const exam = preprocessExamName(rawExam);
-      const keyExam = normKey(exam);
+      const keyExam = normKey2(exam);
 
       const tech = norm(row[LEDGER.tech]);
 
-      // 전체
       addAgg(allAgg, room, cnt);
 
-      // 주/야
       const isNight = (nightSet.size>0 && tech && nightSet.has(tech));
       if(isNight) addAgg(nightAgg, room, cnt);
       else addAgg(dayAgg, room, cnt);
 
-      // 병동(I) + EM 제외 + 17:20~21:10
       const dept = norm(row[LEDGER.dept]).toUpperCase();
       const isEMDept = dept.includes("EM");
       const ioe = norm(row[LEDGER.ioe]).toUpperCase();
@@ -779,100 +1127,121 @@
         wardOnly += cnt;
       }
 
-      // ✅ 조영제 실사용: 검사대장 기반(방별 + 총계)
+      // --- 조영제 실사용 집계 ---
       const cCell = norm(row[LEDGER.contrast]);
-      if (cCell && stdContrastKeys.length) {
+      if (isWithoutText(cCell)) {
+        const wo = stdContrastKeys.find(x => x.isWithout);
+        if (wo) {
+          const a = ensureContrastAgg(wo.keyExact);
+          a.total += cnt;
+          a.by[room] += cnt;
+        }
+      } else {
         const items = splitContrastCell(cCell);
-        ledgerContrastTotal += items.length;
-
         for (const rawItem of items) {
-          const rawNorm = normKey2(rawItem);
-          for (const sc of stdContrastKeys) {
-            if(!sc.keyName) continue;
-            if (rawNorm.includes(sc.keyName)) {
-              const a = ensureContrastAgg(sc.keyName);
-              a.total += 1;
-              a.by[room] += 1;
-              break;
+          const parsed = parseContrastItem(rawItem);
+          const candidates = stdContrastKeys.filter(sc => !sc.isWithout && parsed.key.includes(sc.baseKey));
+          let matched = null;
+
+          if (candidates.length) {
+            let cands = candidates;
+            if (parsed.ml) {
+              const f = cands.filter(sc => sc.ml === parsed.ml);
+              if (f.length) cands = f;
+            }
+            if (parsed.conc) {
+              const f = cands.filter(sc => sc.conc === parsed.conc);
+              if (f.length) cands = f;
+            }
+            matched = cands[0] || null;
+          } else {
+            if (parsed.key.includes("ULTRAVIST")) {
+              matched = stdContrastKeys.find(x => !x.isWithout && x.baseKey==="ULTRAVIST" && x.conc==="300" && x.ml==="100") || null;
             }
           }
+
+          if (matched) {
+            const a = ensureContrastAgg(matched.keyExact);
+            a.total += 1;
+            a.by[room] += 1;
+            ledgerContrastTotalForCompare += 1; // WITHOUT 제외
+          }
         }
-      } else if (cCell) {
-        const items = splitContrastCell(cCell);
-        ledgerContrastTotal += items.length;
       }
 
-      /* ===============================
-         ✅ 검사실분류 매칭(우선순위)
-         0) 사용자 규칙
-         1) 3D
-         2) Abd+Pelv
-         3) Angio
-         4) Dynamic
-         5) 일반
-         + 미분류 기록
-      =============================== */
-
+      // --- 검사실분류 매칭 ---
       let matched = false;
 
-      // 0) 사용자 규칙
-      const ruleKey = applyUserRules(rawExam, userRules);
-      if(ruleKey && examAgg.has(ruleKey)){
-        addAgg(examAgg.get(ruleKey), room, cnt);
+      // 0) Abd+Pelv 최우선
+      const isAbdPelv = keyExam.includes("##ABDPELV##");
+      if(isAbdPelv){
+        addAgg(examAgg.get("Abd+Pelv"), room, cnt);
         matched = true;
       }
 
+      // 1) 사용자 검사명 분류(Head 등) 우선
+      if(!matched){
+        const cat = applyExamCatRules(rawExam, examCatRules);
+        if(cat && examAgg.has(cat)){
+          addAgg(examAgg.get(cat), room, cnt);
+          matched = true;
+        }
+      }
+
+      // 2) 기존 사용자 규칙
+      if(!matched){
+        const ruleKey = applyUserRules(rawExam, userRules);
+        if(ruleKey && examAgg.has(ruleKey)){
+          addAgg(examAgg.get(ruleKey), room, cnt);
+          matched = true;
+        }
+      }
+
+      // 3) venography → Angio Extremity
+      if(!matched && keyExam.includes("##VENOANGIO##")){
+        addAgg(examAgg.get("Angio Extremity"), room, cnt);
+        matched = true;
+      }
+
+      // 4) 기본 자동 분류
       if(!matched){
         const is3D = keyExam.includes("##IS3D##");
-        const isAbdPelv = keyExam.includes("##ABDPELV##");
         const isAngio = keyExam.includes("ANGIO");
         const isDynamic = keyExam.includes("DYNAMIC");
 
-        // 1) 3D (spine라도 3D면 3D Spine로)
         if(is3D){
           for(const t of EXAM_TEMPLATE){
             if(t.type!=="item") continue;
             const key = t.key || t.label;
-            if(key.startsWith("3D ") && matchesGroupItem(exam, "3D", t.label)){
+            if(key.startsWith("3D ") && normKey2(exam).includes("3D") && normKey2(exam).includes(normKey2(t.label))){
               addAgg(examAgg.get(key), room, cnt);
               matched = true;
               break;
             }
           }
-        }
-        // 2) Abd+Pelv
-        else if(isAbdPelv){
-          if(examAgg.has("Abd+Pelv")){
-            addAgg(examAgg.get("Abd+Pelv"), room, cnt);
-            matched = true;
-          }
-        }
-        // 3) Angio
-        else if(isAngio){
+        } else if(isAngio){
           for(const t of EXAM_TEMPLATE){
             if(t.type!=="item") continue;
             const key = t.key || t.label;
-            if(key.startsWith("Angio ") && matchesGroupItem(exam, "ANGIO", t.label)){
+            if(key.startsWith("Angio ") && normKey2(exam).includes("ANGIO") && normKey2(exam).includes(normKey2(t.label))){
               addAgg(examAgg.get(key), room, cnt);
               matched = true;
               break;
             }
           }
-        }
-        // 4) Dynamic
-        else if(isDynamic){
-          if(examAgg.has("Dynamic")){
-            addAgg(examAgg.get("Dynamic"), room, cnt);
-            matched = true;
-          }
-        }
-        // 5) 일반
-        else{
+        } else if(isDynamic){
+          addAgg(examAgg.get("Dynamic"), room, cnt);
+          matched = true;
+        } else {
           for(const t of EXAM_TEMPLATE){
             if(t.type !== "item") continue;
             const key = t.key || t.label;
             if(key.startsWith("Angio ") || key.startsWith("3D ")) continue;
-            if(matches(exam, t.label)){
+
+            if(normKey2(exam).includes(normKey2(t.label))){
+              if(key === "Abdomen" && isAbdPelv) continue;
+              if(key === "Pelvis" && isAbdPelv) continue;
+
               addAgg(examAgg.get(key), room, cnt);
               matched = true;
               break;
@@ -887,11 +1256,12 @@
       }
     }
 
-    // ---------- 좌측 검사실분류 렌더링 ----------
+    // ----- 좌측 표 렌더 + 숫자 TSV(검사실분류) -----
     const examBody = $("examBody");
     examBody.innerHTML = "";
 
     let sumTotal=0, sumBy={1:0,2:0,3:0,4:0,5:0};
+    const tsvExamNumbers = [];
 
     for(const t of EXAM_TEMPLATE){
       if(t.type === "group"){
@@ -901,7 +1271,6 @@
         examBody.appendChild(tr);
         continue;
       }
-
       if(t.type === "sum"){
         const tr = document.createElement("tr");
         tr.className = "sum";
@@ -932,6 +1301,8 @@
         <td>${a.by[5] || ""}</td>
       `;
       examBody.appendChild(tr);
+
+      tsvExamNumbers.push([a.total, a.by[1], a.by[2], a.by[3], a.by[4], a.by[5]]);
     }
 
     $("exam_total").textContent = sumTotal;
@@ -941,41 +1312,30 @@
     $("exam_4").textContent = sumBy[4];
     $("exam_5").textContent = sumBy[5];
 
-    // ---------- 우측 조영제 표 ----------
+    $("tsvExam").value = makeTSVNumbersOnly(tsvExamNumbers);
+
+    // ----- 조영제 표 렌더(계=실사용, WITHOUT 총계 빈칸) + 숫자 TSV -----
     const cBody = $("contrastBody");
     cBody.innerHTML = "";
 
+    let cSumTotal = 0, cSumBy = {1:0,2:0,3:0,4:0,5:0};
+    const tsvContrastNumbers = [];
+
     for(const sc of stdContrastKeys){
-      const cname = sc.cname;
-      const ml = sc.ml;
-      const keyName = sc.keyName;
+      const byAgg = contrastAggByRoom.get(sc.keyExact);
+      const by = byAgg ? byAgg.by : {1:0,2:0,3:0,4:0,5:0};
+      const totalUse = (by[1]+by[2]+by[3]+by[4]+by[5]);
 
-      let by = {1:0,2:0,3:0,4:0,5:0};
-      const a = contrastAggByRoom.get(keyName);
-      if(a) by = a.by;
-
-      // 계(처방): 조영제통계 우선, 없으면 방별 합
-      let total = 0;
-      if(contrastCount.size){
-        const exactKey = `${cname}||${ml}`;
-        if(contrastCount.has(exactKey)) total = contrastCount.get(exactKey);
-        else {
-          let sum = 0;
-          for (const [k,v] of contrastCount.entries()){
-            const [n] = k.split("||");
-            if (normKey2(n) === keyName) sum += v;
-          }
-          total = sum;
-        }
-      } else {
-        total = by[1]+by[2]+by[3]+by[4]+by[5];
+      if(!sc.isWithout){
+        cSumTotal += totalUse;
       }
+      cSumBy[1] += by[1]; cSumBy[2] += by[2]; cSumBy[3] += by[3]; cSumBy[4] += by[4]; cSumBy[5] += by[5];
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="left">${cname}</td>
-        <td>${ml}</td>
-        <td>${total || ""}</td>
+        <td class="left">${sc.cname}</td>
+        <td>${sc.ml}</td>
+        <td>${sc.isWithout ? "" : (totalUse || "")}</td>
         <td>${by[1] || ""}</td>
         <td>${by[2] || ""}</td>
         <td>${by[3] || ""}</td>
@@ -983,20 +1343,42 @@
         <td>${by[5] || ""}</td>
       `;
       cBody.appendChild(tr);
+
+      tsvContrastNumbers.push([sc.isWithout ? 0 : totalUse, by[1], by[2], by[3], by[4], by[5]]);
     }
 
-    // ---------- 특이사항 ----------
+    $("c_sum_total").textContent = cSumTotal;
+    $("c_sum_1").textContent = cSumBy[1];
+    $("c_sum_2").textContent = cSumBy[2];
+    $("c_sum_3").textContent = cSumBy[3];
+    $("c_sum_4").textContent = cSumBy[4];
+    $("c_sum_5").textContent = cSumBy[5];
+
+    const usageEl = $("usageBadge");
+    usageEl.style.display = "inline-block";
+    const mismatch = (fContrast && contrastStatTotal !== ledgerContrastTotalForCompare);
+    usageEl.className = "badge " + (mismatch ? "warn" : "ok");
+    usageEl.textContent = `조영제 실사용 ${ledgerContrastTotalForCompare}`;
+
+    $("tsvContrast").value = makeTSVNumbersOnly(tsvContrastNumbers);
+
+    // 특이사항
     $("io_in").textContent = wardOnly;
     $("io_em").textContent = "";
     $("io_out").textContent = "";
     $("io_sum").textContent = wardOnly;
 
-    // ---------- 검사실 구분 ----------
+    // 검사실 구분
     fillRow("day", dayAgg);
     fillRow("night", nightAgg);
     fillRow("all", allAgg);
 
-    // ---------- 검사실분류 vs 검사실구분 체크 ----------
+    $("tsvShift").value = makeTSVNumbersOnly([
+      [dayAgg.total, dayAgg.by[1], dayAgg.by[2], dayAgg.by[3], dayAgg.by[4], dayAgg.by[5]],
+      [nightAgg.total, nightAgg.by[1], nightAgg.by[2], nightAgg.by[3], nightAgg.by[4], nightAgg.by[5]],
+      [allAgg.total, allAgg.by[1], allAgg.by[2], allAgg.by[3], allAgg.by[4], allAgg.by[5]],
+    ]);
+
     const sameTotal = (sumTotal === allAgg.total);
     const sameRooms =
       sumBy[1] === allAgg.by[1] &&
@@ -1005,8 +1387,7 @@
       sumBy[4] === allAgg.by[4] &&
       sumBy[5] === allAgg.by[5];
 
-    // ---------- 조영제 총계(처방) vs 실사용(검사대장) 체크 ----------
-    const contrastMatch = (contrastStatTotal === ledgerContrastTotal);
+    const contrastMatch = (!fContrast) ? true : (contrastStatTotal === ledgerContrastTotalForCompare);
 
     if(sameTotal && sameRooms && contrastMatch){
       setBadge(true, "건수/조영제 일치");
@@ -1016,31 +1397,31 @@
         const diffTotal = sumTotal - allAgg.total;
         msgs.push(`검사 건수 불일치(합계차이 ${diffTotal})`);
       }
-      if(!contrastMatch && contrastCount.size){
-        msgs.push(`조영제 불일치(실사용 ${ledgerContrastTotal} vs 처방 ${contrastStatTotal})`);
+      if(fContrast && !contrastMatch){
+        msgs.push(`조영제 불일치`);
       }
       setBadge(false, msgs.join(" / ") || "불일치");
 
-      if(!contrastMatch && contrastCount.size){
+      if(fContrast && !contrastMatch){
         alert(
           "⚠️ 조영제 건수 불일치 감지\n\n" +
-          `• 검사대장(실사용): ${ledgerContrastTotal} 건\n` +
+          `• 검사대장(실사용, WITHOUT 제외): ${ledgerContrastTotalForCompare} 건\n` +
           `• 조영제통계(처방): ${contrastStatTotal} 건\n\n` +
           "→ 검사대장 조영제 입력 누락/중복 또는\n" +
-          "→ 처방 삭제 미반영 가능성 확인 필요"
+          "→ 처방 삭제 미반영 가능성 확인 필요\n\n" +
+          "※ WITHOUT(비조영)은 비교에서 제외됩니다."
         );
       }
     }
 
-    // ✅ 미분류 렌더
     renderUnclassified(unclassifiedMap);
+    renderRulesView();
+    renderExamCatRulesSummary();
 
-    // 날짜
     $("dateText").textContent = norm($("reportDate").value);
-
     $("status").innerHTML =
       `<span class="ok">완료 ✅</span> ` +
-      `(3D 우선, dynamic 우선, Abd+Pelv 결합, angio 세부 매핑, 미분류 목록/규칙 추가 포함)`;
+      `(조1·조2 적용 / 검사명 분류=분류 클릭→팝업 저장 / 공유 링크로 다른 PC에서도 동일 적용 / TSV 숫자만(0=빈칸))`;
   });
 </script>
 </body>
