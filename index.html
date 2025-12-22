@@ -155,6 +155,13 @@
 
     <div class="line"></div>
 
+    <div>
+      <div class="muted">야간 근무자 이름(콤마로)</div>
+      <input id="nightNames" type="text" placeholder="예: 홍길동, 김철수, 박영희" style="width:100%" />
+      <div class="muted">※ 검사자1이 여기에 있으면 시간과 무관하게 야간으로 집계</div>
+    </div>
+  </div>
+
   <!-- ✅ 검사명 분류(사용자): “초기화 버튼” 없음 + “Head 누르면 팝업” -->
   <div class="panel">
     <div class="panel-title">검사명 분류(사용자)</div>
@@ -600,19 +607,30 @@ OMU"></textarea>
     return XLSX.utils.sheet_to_json(ws,{defval:""});
   }
 
+  // ✅✅✅ 여기 수정됨: R 값 처리 규칙
+  // - "31" => CT5
+  // - "41" => CT4
+  // - "1~5" 단일 숫자만 허용
+  // - 그 외 두자리 이상은 앞자리 판단 금지 (예: 32, 42, 10 등은 제외)
   function extractRoomNo(rValue){
     const s = String(rValue ?? "").trim();
     if(!s) return null;
-    const nums = s.match(/\d+/);
-    if(!nums) return null;
-    const n = Number(nums[0]);
-    if(Number.isFinite(n)){
-      if(n >= 10){
-        const room = Math.floor(n / 10); // 41 -> 4
-        if(room >= 1 && room <= 5) return room;
-      }
-      if(n >= 1 && n <= 5) return n;
+
+    const m = s.match(/\d+/);
+    if(!m) return null;
+
+    const raw = m[0]; // 첫 숫자 덩어리(문자열)
+
+    // 예외(정확히 일치)
+    if (raw === "31") return 5; // 31 -> CT5
+    if (raw === "41") return 4; // 41 -> CT4
+
+    // 단일 숫자(1~5)만
+    if (raw.length === 1) {
+      const n = Number(raw);
+      if (n >= 1 && n <= 5) return n;
     }
+
     return null;
   }
 
