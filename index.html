@@ -1450,10 +1450,7 @@ OMU"></textarea>
 
       const cCell = norm(row[LEDGER.contrast]);
 
-      // ✅✅✅ [핵심] 같은 환자에서 "조영제 입력된 검사(행)"가 2건 이상이면 경고
-      // - WITHOUT/빈칸/NC/WO는 제외
-      // - 8시/10시처럼 두 번 검사에서 조영제 입력되면 examCount=2 → 경고
-      // - 조영제 종류 2종 이상도 추가 경고
+      // ✅✅✅ 같은 환자 조영제 중복 경고(행 기준 유지)
       if(pid){
         const p = ensurePatient(pid);
         updatePatientTime(p, timeStr);
@@ -1473,13 +1470,13 @@ OMU"></textarea>
         }
       }
 
-      // ---- 아래는 기존 조영제 표 집계 로직(방별) 유지 ----
+      // ---- ✅✅✅ [수정] 조영제 표 집계 로직: +1 → +cnt 반영 ----
       if (isWithoutText(cCell)) {
         const wo = stdContrastKeys.find(x => x.isWithout);
         if (wo) {
           const a = ensureContrastAgg(wo.keyExact);
-          a.total += cnt;
-          a.by[room] += cnt;
+          a.total += cnt;          // ✅ 변경
+          a.by[room] += cnt;       // ✅ 변경
         }
       } else {
         const items = splitContrastCell(cCell);
@@ -1507,9 +1504,9 @@ OMU"></textarea>
 
           if (matched) {
             const a = ensureContrastAgg(matched.keyExact);
-            a.total += 1;
-            a.by[room] += 1;
-            ledgerContrastTotalForCompare += 1;
+            a.total += cnt;               // ✅ 변경
+            a.by[room] += cnt;            // ✅ 변경
+            ledgerContrastTotalForCompare += cnt;  // ✅ 변경
           }
         }
       }
@@ -1601,9 +1598,6 @@ OMU"></textarea>
       const examN = p.examCount || 0;
       const typeN = (p.typeSet && p.typeSet.size) ? p.typeSet.size : 0;
 
-      // ✅ 경고 조건:
-      // (A) 조영제 입력된 검사(행) 2건 이상  ← 8시/10시 케이스 확실히 잡힘
-      // (B) 조영제 종류 2종 이상
       if(examN >= 2 || typeN >= 2){
         dupArr.push({
           pid,
@@ -1628,7 +1622,7 @@ OMU"></textarea>
         `⚠️ 같은 환자 조영제 중복 감지: ${dupArr.length}명\n\n` +
         `→ 상단의 "같은 환자 조영제 중복 경고" 목록을 확인하세요.\n` +
         `→ (등록번호 기준 정렬)\n\n` +
-        `※ 기준: 조영제 입력된 검사(행) 2건 이상 OR 조영제 종류 2종 이상`
+        `※ 기준: 조영제 입력검사(행) 2건 이상 OR 조영제 종류 2종 이상`
       );
     }
 
@@ -1829,8 +1823,8 @@ OMU"></textarea>
     $("dateText").textContent = norm($("reportDate").value);
     $("status").innerHTML =
       `<span class="ok">완료 ✅</span> ` +
-      `(✅ 등록번호 컬럼 자동탐지 / ✅ 같은 환자 조영제 경고: 조영제 입력검사 2건↑ 또는 종류 2종↑ / 등록번호 정렬)`;
+      `(✅ 등록번호 컬럼 자동탐지 / ✅ 같은 환자 조영제 경고: 조영제 입력검사 2건↑ 또는 종류 2종↑ / 등록번호 정렬 / ✅ 조영제 표 집계에 횟수(cnt) 반영)`;
   });
 </script>
 </body>
-      </html>
+  </html>
